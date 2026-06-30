@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KURO - Webcomic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Finger+Paint&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --sangue-escuro:  #1a0505;
+            --sangue-profundo:#2d0a0a;
+            --brasa:          #8b1a1a;
+            --brasa-viva:     #c0392b;
+            --quase-preto:    #0d0d0d;
+            --brilho-fogo:    #e05c2a;
+        }
+
+        body {
+            background-color: var(--quase-preto);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        /* ======================================================
+           WRAPPER / TELAS
+        ====================================================== */
+        .wrapper {
+            display: flex;
+            width: 200vw;
+            height: 100vh;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .wrapper.mudou-tela { transform: translateX(-100vw); }
+
+        .tela { width: 100vw; height: 100vh; position: relative; }
+
+        /* ======================================================
+           TELA INICIAL
+        ====================================================== */
+        #tela-inicial {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(13,5,5,0.72)),
+                        url('images/HOME.png') center center / cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        #tela-inicial::before {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 100%, rgba(139,26,26,0.55) 0%, transparent 65%),
+                radial-gradient(ellipse at 20% 80%,  rgba(192,57,43,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%,  rgba(139,26,26,0.10) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        #tela-inicial::after {
+            content: '';
+            position: absolute; bottom: 0; left: -20%;
+            width: 140%; height: 30%;
+            background: linear-gradient(to top, rgba(13,5,5,0.92) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particulas-home-wrap {
+            position: absolute; inset: 0;
+            pointer-events: none;
+            z-index: 2; overflow: hidden;
+        }
+        .particula {
+            position: absolute; border-radius: 50%;
+            animation: flutuarP linear infinite; opacity: 0;
+        }
+        @keyframes flutuarP {
+            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: .7; }
+            90%  { opacity: .5; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        .cristal-canto { position: absolute; opacity: .22; pointer-events: none; z-index: 4; }
+        .cristal-canto.tl { top:0; left:0;  transform: rotate(90deg); }
+        .cristal-canto.tr { top:0; right:0; transform: scaleX(-1) rotate(90deg); }
+
+        .home-conteudo {
+            position: relative; z-index: 5;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+
+        .home-runa { width: 56px; margin-bottom: 8px; opacity: .75; animation: pulsarRuna 3.5s ease-in-out infinite; }
+        @keyframes pulsarRuna {
+            0%,100% { opacity:.45; transform:scale(1);    filter:drop-shadow(0 0 4px  var(--brasa));      }
+            50%     { opacity:1;   transform:scale(1.08); filter:drop-shadow(0 0 14px var(--brilho-fogo)); }
+        }
+
+        #tela-inicial h1 {
+            font-family: 'Finger Paint', cursive;
+            font-size: 7rem; color: #fff; letter-spacing: 5px; margin-bottom: 6px;
+            text-shadow: 0 0 20px rgba(192,57,43,.9), 0 0 55px rgba(139,26,26,.5), 3px 3px 15px rgba(0,0,0,.95);
+        }
+        .home-subtitulo {
+            font-size: .82rem; letter-spacing: 6px; text-transform: uppercase;
+            color: rgba(220,160,140,.65); margin-bottom: 32px;
+        }
+
+        .btn-iniciar {
+            background: linear-gradient(135deg,#fff 0%,#f5d0c8 100%);
+            color: var(--sangue-profundo); font-weight: 700; font-size: 1.1rem;
+            padding: 14px 42px; border: none; cursor: pointer;
+            box-shadow: 0 6px 0 #2d0a0a, 0 0 22px rgba(192,57,43,.35);
+            transition: all .2s; text-transform: uppercase; letter-spacing: 3px;
+            position: relative; overflow: hidden;
+        }
+        .btn-iniciar::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+            transform: translateX(-100%); transition: transform .5s;
+        }
+        .btn-iniciar:hover::after { transform: translateX(100%); }
+        .btn-iniciar:hover { transform: translateY(2px); box-shadow: 0 4px 0 #2d0a0a, 0 0 34px rgba(192,57,43,.55); }
+        .btn-iniciar:active{ transform: translateY(6px); box-shadow: 0 0  0 #2d0a0a; }
+
+        .creditos {
+            position: absolute; bottom: 24px;
+            font-size: .8rem; letter-spacing: 4px; text-transform: uppercase;
+            color: rgba(220,180,180,.55);
+            z-index: 10;
+        }
+
+        /* ======================================================
+           BOTÃO DE SOM FLUTUANTE
+        ====================================================== */
+        #btn-som {
+            position: absolute;
+            top: 24px; right: 28px;
+            z-index: 20;
+            background: rgba(13,5,5,0.55);
+            border: 1px solid rgba(139,26,26,.45);
+            color: rgba(220,160,140,.85);
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            transition: all .3s;
+            backdrop-filter: blur(4px);
+        }
+        #btn-som:hover {
+            background: rgba(139,26,26,.35);
+            border-color: var(--brasa-viva);
+            color: #fff;
+            box-shadow: 0 0 16px rgba(192,57,43,.4);
+        }
+        #btn-som.mutado { color: rgba(220,160,140,.35); border-color: rgba(139,26,26,.2); }
+
+        /* ======================================================
+           TELA DA HQ — BACKGROUND COM DEGRADÊ, BRILHOS E LATERAIS
+        ====================================================== */
+        #tela-hq {
+            background: linear-gradient(180deg, 
+                            #080202 0%, 
+                            #120404 25%, 
+                            #1a0606 50%, 
+                            #120404 75%, 
+                            #080202 100%);
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            height: 100vh;
+            position: relative;
+        }
+
+        #tela-hq::before {
+            content: ''; 
+            position: fixed; 
+            inset: 0; 
+            pointer-events: none; 
+            z-index: 0;
+            background:
+                radial-gradient(circle at 5% 30%, rgba(139, 26, 26, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 95% 70%, rgba(224, 92, 42, 0.1) 0%, transparent 55%),
+                radial-gradient(circle at 50% 50%, rgba(13, 13, 13, 0.4) 0%, transparent 100%);
+        }
+
+        .particulas-hq-wrap {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .particula-hq {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: flutuarHQ linear infinite, pulsarBrilho 4s ease-in-out infinite alternate;
+        }
+        @keyframes flutuarHQ {
+            0%   { transform: translateY(105vh) translateX(0); }
+            50%  { transform: translateY(50vh) translateX(15px); }
+            100% { transform: translateY(-5vh) translateX(-15px); }
+        }
+        @keyframes pulsarBrilho {
+            0%, 100% { opacity: 0.1; filter: brightness(0.7); }
+            50% { opacity: 0.6; filter: brightness(1.3); }
+        }
+
+        .menu-hq {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 24px 40px; width: 100%;
+            position: relative; z-index: 10;
+            border-bottom: 1px solid rgba(139,26,26,.2);
+            background: linear-gradient(to bottom, rgba(8,2,2,.95), transparent);
+        }
+        .menu-hq .logo-hq {
+            font-family: 'Finger Paint', cursive; font-size: 2rem; color: #fff;
+            text-shadow: 0 0 14px rgba(192,57,43,.6);
+        }
+        .menu-hq .btn-inicio {
+            color: rgba(220,160,140,.8); font-size: .85rem; letter-spacing: 3px;
+            text-transform: uppercase; border: none; border-bottom: 1px solid rgba(192,57,43,.35);
+            padding-bottom: 3px; background: none; cursor: pointer; transition: all .3s;
+        }
+        .menu-hq .btn-inicio:hover { color:#fff; border-bottom-color:var(--brasa-viva); }
+
+        .conteudo-hq {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 40px; padding: 40px 0 100px; width: 100%; position: relative; z-index: 5;
+        }
+
+        /* ======================================================
+           QUADRINHOS BASE
+        ====================================================== */
+        .quadrinho {
+            width: 100%; max-width: 700px; height: auto; min-height: 450px;
+            display: block; object-fit: cover;
+            opacity: 0; transform: translateY(90px) scale(.98);
+            transition: opacity 1.2s cubic-bezier(.215,.610,.355,1),
+                        transform 1.2s cubic-bezier(.215,.610,.355,1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+        .quadrinho.visivel { opacity: 1; transform: translateY(0) scale(1); }
+
+        @keyframes quedaCena1 {
+            0%   { opacity:0; transform:translateY(-200px) rotate(-15deg) scale(.8); }
+            70%  { transform:translateY(20px) rotate(5deg) scale(1.05); }
+            100% { opacity:1; transform:translateY(0) rotate(0deg) scale(1); }
+        }
+        .quadrinho.cena1-queda           { transition:none; opacity:0; }
+        .quadrinho.cena1-queda.visivel   { animation:quedaCena1 1.5s ease-out forwards; }
+
+        .cena3-container {
+            width:100%; max-width:1400px; height:70vh; overflow:hidden;
+            opacity:0; transform:translateY(90px);
+            transition: opacity 1.2s cubic-bezier(.215,.610,.355,1),
+                        transform 1.2s cubic-bezier(.215,.610,.355,1);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.9);
+        }
+        .cena3-container.visivel { opacity:1; transform:translateY(0); }
+        .cena3-container img { height:100%; width:auto; min-width:100%; object-fit:cover; transform-origin:left center; }
+        .cena3-container.visivel img { animation: passeioCena3 14s ease-in-out forwards; }
+        @keyframes passeioCena3 {
+            0%  { transform:scale(1.4) translateX(0);    }
+            55% { transform:scale(1.4) translateX(-55%); }
+            75% { transform:scale(1.4) translateX(-45%); }
+            100%{ transform:scale(1)   translateX(0);    }
+        }
+
+        .container-quinto-quadro {
+            width:100%; max-width:700px; position:relative;
+        }
+        .bloco-vazado {
+            position:absolute; right:-150px; top:25%;
+            width:300px; height:300px;
+            background-color:#ff69b4;
+            box-shadow:0 15px 35px rgba(0,0,0,.7);
+            z-index:10; opacity:0;
+            transform:translate(30px,0) scale(.9);
+            transition:opacity 1s ease, transform 1s ease;
+        }
+        .bloco-vazado img { width:100%; height:100%; object-fit:cover; }
+        .bloco-vazado.mostrar { opacity:1; transform:translate(0,0) scale(1); }
+
+        .container-cena14 {
+            width:100%; max-width:700px; position:relative;
+        }
+        #cena14-base {
+            width:100%; max-width:700px; height:auto; min-height:450px;
+            display:block; object-fit:cover;
+            opacity:0; transform:translateY(90px) scale(.98);
+            transition: opacity 1.2s cubic-bezier(.215,.610,.355,1),
+                        transform 1.2s cubic-bezier(.215,.610,.355,1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+        #cena14-base.visivel { opacity:1; transform:translateY(0) scale(1); }
+
+        .painel-lateral {
+            position:absolute; top:15%; width:220px; height:280px;
+            overflow:hidden;
+            box-shadow:0 12px 32px rgba(0,0,0,.9), 0 0 0 1px rgba(139,26,26,.25);
+            opacity:0;
+            transition: opacity 1.2s ease, transform 1.2s cubic-bezier(.215,.610,.355,1);
+        }
+        .painel-lateral img { width:100%; height:100%; object-fit:cover; }
+
+        .painel-lateral.esq {
+            left:-100px;
+            transform: translate(-20px, 10px) rotate(-2deg);
+        }
+        .painel-lateral.dir {
+            right:-100px;
+            transform: translate(20px, 10px) rotate(2deg);
+        }
+        .painel-lateral.mostrar { opacity:1; }
+        .painel-lateral.esq.mostrar { transform: translate(0,0) rotate(-2deg); }
+        .painel-lateral.dir.mostrar { transform: translate(0,0) rotate(2deg); }
+
+        .divisor-runico {
+            width:100%; max-width:700px; display:flex; align-items:center; gap:16px;
+            opacity:0; transform:translateY(30px);
+            transition: opacity .8s ease, transform .8s ease;
+        }
+        .divisor-runico.visivel { opacity:1; transform:translateY(0); }
+        .divisor-runico::before, .divisor-runico::after {
+            content:''; flex:1; height:1px;
+            background:linear-gradient(to right,transparent,rgba(139,26,26,.5),transparent);
+        }
+
+        .secao-transformar {
+            width:100%; max-width:700px;
+            display:flex; flex-direction:column; align-items:center; gap:20px; padding:40px 20px;
+            opacity:0; transform:translateY(50px);
+            transition:opacity 1s ease, transform 1s ease;
+        }
+        .secao-transformar.visivel { opacity:1; transform:translateY(0); }
+        .secao-transformar p { font-size:.82rem; letter-spacing:3px; text-transform:uppercase; color:rgba(220,160,140,.45); text-align:center; }
+
+        .btn-transformar {
+            position:relative; background:transparent;
+            border:2px solid var(--brasa); color:#fff;
+            font-family:'Finger Paint',cursive; font-size:1.5rem;
+            padding:18px 56px; cursor:pointer;
+            letter-spacing:4px; text-transform:uppercase; overflow:hidden;
+            transition:all .3s;
+            box-shadow:0 0 18px rgba(139,26,26,.2), inset 0 0 18px rgba(139,26,26,.05);
+        }
+        .btn-transformar::before {
+            content:''; position:absolute; inset:0;
+            background:linear-gradient(135deg,rgba(139,26,26,.18),rgba(224,92,42,.1));
+            opacity:0; transition:opacity .3s;
+        }
+        .btn-transformar:hover::before { opacity:1; }
+        .btn-transformar:hover {
+            border-color:var(--brilho-fogo);
+            box-shadow:0 0 40px rgba(224,92,42,.45),0 0 80px rgba(224,92,42,.12),inset 0 0 28px rgba(224,92,42,.08);
+            text-shadow:0 0 14px rgba(224,92,42,.8);
+        }
+        .btn-transformar .canto { position:absolute; width:8px; height:8px; border-color:var(--brilho-fogo); border-style:solid; }
+        .btn-transformar .canto.tl{ top:-1px;    left:-1px;  border-width:2px 0 0 2px; }
+        .btn-transformar .canto.tr{ top:-1px;    right:-1px; border-width:2px 2px 0 0; }
+        .btn-transformar .canto.bl{ bottom:-1px; left:-1px;  border-width:0 0 2px 2px; }
+        .btn-transformar .canto.br{ bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+
+        /* ======================================================
+           CENA 9 — CONTAINER DE TRANSIÇÃO SUAVE
+        ====================================================== */
+        .cena9-container {
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+            display: none;
+            overflow: visible;
+        }
+        .cena9-container.ativa { 
+            display: block; 
+        }
+
+        .cena9-frame {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            object-fit: contain;
+            display: block;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 1.4s cubic-bezier(0.45, 0, 0.55, 1), 
+                        filter 1.4s cubic-bezier(0.45, 0, 0.55, 1);
+            filter: blur(5px) brightness(0.6);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+        }
+
+        .cena9-frame.ativo {
+            opacity: 1;
+            position: relative;
+            filter: blur(0px) brightness(1);
+            z-index: 2;
+        }
+
+        .cena9-frame.em-transicao {
+            opacity: 1;
+            filter: blur(8px) brightness(2.2) saturate(1.8);
+            z-index: 3;
+        }
+
+        .flash-magia {
+            position: absolute; 
+            inset: 0; 
+            z-index: 6; 
+            pointer-events: none;
+            background: radial-gradient(circle at center,
+                rgba(255, 230, 210, 0.95) 0%,
+                rgba(224, 92, 42, 0.6) 40%,
+                rgba(139, 26, 26, 0.2) 70%,
+                transparent 100%);
+            opacity: 0;
+            mix-blend-mode: screen;
+            transition: opacity 0.4s ease-out;
+        }
+        .flash-magia.disparar {
+            opacity: 1;
+        }
+
+        .brilhos-wrap { 
+            position: absolute; 
+            inset: -40px; 
+            pointer-events: none; 
+            z-index: 5; 
+        }
+        .bp {
+            position: absolute; 
+            border-radius: 50%;
+            animation: bpFly ease-out forwards;
+            mix-blend-mode: screen;
+        }
+        @keyframes bpFly {
+            0%   { opacity: 0; transform: translate(0, 0) scale(0.3); }
+            20%  { opacity: 1; }
+            90%  { opacity: 0.8; }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.4); }
+        }
+
+        .conteudo-bloqueado { display:none; flex-direction:column; align-items:center; gap:40px; width:100%; }
+        .conteudo-bloqueado.desbloqueado { display:flex; }
+
+        /* ======================================================
+           INTERAÇÕES POR CENA
+        ====================================================== */
+
+        /* — Cena 1: impacto visual ao bater —  */
+        @keyframes impactoCena1 {
+            0%,100% { box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
+            30%     { box-shadow: 0 0 0 6px rgba(192,57,43,.7), 0 0 40px rgba(192,57,43,.4); }
+            60%     { box-shadow: 0 0 0 2px rgba(192,57,43,.3); }
+        }
+        .cena1-impacto { animation: impactoCena1 .6s ease-out forwards !important; }
+
+        /* Sacudida da tela ao impacto da cena 1 */
+        @keyframes sacudirTela {
+            0%,100% { transform: translateX(-100vw); }
+            15%     { transform: translateX(calc(-100vw + 8px)); }
+            30%     { transform: translateX(calc(-100vw - 8px)); }
+            45%     { transform: translateX(calc(-100vw + 5px)); }
+            60%     { transform: translateX(calc(-100vw - 4px)); }
+            75%     { transform: translateX(calc(-100vw + 2px)); }
+        }
+        .wrapper.sacudir { animation: sacudirTela .5s ease-out forwards; }
+
+        /* — Cena 2: zoom suave no hover — */
+        .cena2-zoom {
+            overflow: hidden;
+            cursor: zoom-in;
+        }
+        .cena2-zoom img, .cena2-zoom.quadrinho {
+            transition: transform .6s cubic-bezier(.215,.610,.355,1),
+                        opacity 1.2s cubic-bezier(.215,.610,.355,1),
+                        box-shadow .6s ease !important;
+        }
+        .quadrinho.cena2-zoom:hover {
+            transform: scale(1.04) !important;
+            box-shadow: 0 22px 50px rgba(0,0,0,0.95), 0 0 30px rgba(139,26,26,.25) !important;
+        }
+
+        /* — Cena 3: parallax — tratado no JS — */
+
+        /* — Cena 4: vinheta pulsante ao entrar — */
+        @keyframes vinheta {
+            0%   { box-shadow: 0 15px 35px rgba(0,0,0,.8), inset 0 0 0px rgba(139,26,26,0); }
+            25%  { box-shadow: 0 15px 35px rgba(0,0,0,.8), inset 0 0 60px rgba(139,26,26,.6); }
+            55%  { box-shadow: 0 15px 35px rgba(0,0,0,.8), inset 0 0 30px rgba(139,26,26,.3); }
+            80%  { box-shadow: 0 15px 35px rgba(0,0,0,.8), inset 0 0 50px rgba(139,26,26,.5); }
+            100% { box-shadow: 0 15px 35px rgba(0,0,0,.8), inset 0 0 0px rgba(139,26,26,0); }
+        }
+        .cena4-pulso { animation: vinheta 2.2s ease-in-out forwards !important; }
+
+        /* — Cena 5 bloco: tremor de visão — */
+        @keyframes tremorVisao {
+            0%,100% { transform: translate(0,0) scale(1); }
+            20%     { transform: translate(-3px, 1px) scale(1.01); }
+            40%     { transform: translate(3px,-2px) scale(.99); }
+            60%     { transform: translate(-2px, 2px) scale(1.01); }
+            80%     { transform: translate(2px,-1px) scale(1.00); }
+        }
+        #bloco-atrasado.mostrar { animation: tremorVisao .6s ease-out .3s 1 !important; }
+
+        /* — Cenas 6,7,8: hover com brilho colorido na borda — */
+        .quadrinho.hover-vermelho:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,.8), 0 0 0 2px rgba(192,57,43,.8), 0 0 28px rgba(192,57,43,.35) !important;
+            transform: scale(1.02) !important;
+        }
+        .quadrinho.hover-laranja:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,.8), 0 0 0 2px rgba(224,92,42,.8), 0 0 28px rgba(224,92,42,.35) !important;
+            transform: scale(1.02) !important;
+        }
+        .quadrinho.hover-branco:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,.8), 0 0 0 2px rgba(255,255,255,.6), 0 0 28px rgba(255,255,255,.2) !important;
+            transform: scale(1.02) !important;
+        }
+        .quadrinho.hover-vermelho,
+        .quadrinho.hover-laranja,
+        .quadrinho.hover-branco {
+            transition: transform .4s ease, box-shadow .4s ease,
+                        opacity 1.2s cubic-bezier(.215,.610,.355,1) !important;
+            cursor: pointer;
+        }
+
+        /* — Cenas 10–13: flash de magia ao entrar — */
+        @keyframes flashMagiaEntrada {
+            0%   { filter: brightness(1) saturate(1); }
+            15%  { filter: brightness(2.5) saturate(0) sepia(.8) hue-rotate(320deg); }
+            35%  { filter: brightness(1.6) saturate(1.4); }
+            100% { filter: brightness(1) saturate(1); }
+        }
+        .cena-pos-transf.visivel { animation: flashMagiaEntrada 1.2s ease-out forwards !important; }
+
+        /* — Painéis cena 14: brilho pulsando depois de aparecer — */
+        @keyframes brilhoPainel {
+            0%,100% { box-shadow: 0 12px 32px rgba(0,0,0,.9), 0 0 0 1px rgba(139,26,26,.25); }
+            50%     { box-shadow: 0 12px 32px rgba(0,0,0,.9), 0 0 0 2px rgba(192,57,43,.7), 0 0 20px rgba(192,57,43,.3); }
+        }
+        .painel-lateral.mostrar { animation: brilhoPainel 2.5s ease-in-out 1s infinite !important; }
+
+        /* — Cenas 15/16: fade ultra-lento + texto de encerramento — */
+        .quadrinho.cena-final {
+            transition: opacity 2.4s cubic-bezier(.215,.610,.355,1),
+                        transform 2.4s cubic-bezier(.215,.610,.355,1) !important;
+        }
+
+        .msg-fim {
+            opacity: 0;
+            font-family: 'Finger Paint', cursive;
+            font-size: .85rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(220,160,140,.5);
+            text-align: center;
+            transform: translateY(12px);
+            transition: opacity 2s ease 1s, transform 2s ease 1s;
+            pointer-events: none;
+            padding: 0 20px;
+        }
+        .msg-fim.visivel { opacity: 1; transform: translateY(0); }
+        ====================================================== */
+        @media (max-width: 768px) {
+
+            /* Home */
+            #tela-inicial h1 {
+                font-size: 4.2rem;
+                letter-spacing: 3px;
+            }
+            .home-subtitulo {
+                font-size: .72rem;
+                letter-spacing: 4px;
+                margin-bottom: 24px;
+            }
+            .home-runa { width: 42px; }
+            .btn-iniciar {
+                font-size: .9rem;
+                padding: 12px 28px;
+                letter-spacing: 2px;
+            }
+            #btn-som {
+                top: 16px; right: 16px;
+                width: 40px; height: 40px;
+                font-size: 1rem;
+            }
+            .creditos { font-size: .65rem; letter-spacing: 2px; bottom: 16px; }
+
+            /* Menu HQ */
+            .menu-hq {
+                padding: 16px 20px;
+            }
+            .menu-hq .logo-hq { font-size: 1.4rem; }
+            .menu-hq .btn-inicio { font-size: .75rem; letter-spacing: 2px; }
+
+            /* Conteúdo HQ */
+            .conteudo-hq {
+                gap: 24px;
+                padding: 24px 0 80px;
+            }
+
+            /* Quadrinhos */
+            .quadrinho {
+                min-height: 0;
+                transform: translateY(50px) scale(.99);
+            }
+
+            /* Cena 3 panorâmica — altura menor no mobile */
+            .cena3-container {
+                height: 42vh;
+            }
+
+            /* Cena 5 — bloco flutuante vai para baixo do quadrinho no mobile */
+            .container-quinto-quadro {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .bloco-vazado {
+                position: static;        /* tira do absolute */
+                width: 85%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+                transform: scale(.9);
+                margin: 0 auto;
+            }
+            .bloco-vazado.mostrar {
+                transform: scale(1);
+            }
+
+            /* Cena 14 — painéis laterais ficam abaixo, empilhados */
+            .container-cena14 {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .painel-lateral {
+                position: static;        /* tira do absolute */
+                width: 85%;
+                height: auto;
+                aspect-ratio: 220 / 280;
+                transform: none !important;
+            }
+            .painel-lateral.esq { transform: rotate(-1deg) !important; }
+            .painel-lateral.dir { transform: rotate(1deg)  !important; }
+            .painel-lateral.mostrar { transform: none !important; }
+            .painel-lateral.esq.mostrar { transform: rotate(-1deg) !important; }
+            .painel-lateral.dir.mostrar { transform: rotate(1deg)  !important; }
+
+            /* Botão transformar */
+            .btn-transformar {
+                font-size: 1.1rem;
+                padding: 14px 32px;
+                letter-spacing: 2px;
+            }
+
+            /* Cena 9 frames */
+            .cena9-frame {
+                max-height: 70vh;
+            }
+
+            /* Divisor rúnico */
+            .divisor-runico { max-width: 90%; }
+
+            /* Seção transformar */
+            .secao-transformar { padding: 28px 16px; }
+        }
+
+        /* Telas muito pequenas — até 390px */
+        @media (max-width: 390px) {
+            #tela-inicial h1 { font-size: 3.2rem; }
+            .home-subtitulo { letter-spacing: 3px; }
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="wrapper" id="wrapper-principal">
+
+    <!-- Áudio global — persiste entre as telas -->
+    <audio id="musica-ambient" loop preload="auto">
+        <source src="som_ambiente_caverna.mp3" type="audio/mpeg">
+    </audio>
+
+    <section class="tela" id="tela-inicial">
+        <div class="particulas-home-wrap" id="particulas-home"></div>
+
+        <!-- Botão de som -->
+        <button id="btn-som" onclick="toggleSom()" title="Ativar / desativar som">🔊</button>
+
+        <div class="home-conteudo">
+            <svg class="home-runa" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+                <line x1="30" y1="5"  x2="30" y2="75" stroke="#8b1a1a" stroke-width="2"/>
+                <line x1="30" y1="20" x2="10" y2="35" stroke="#8b1a1a" stroke-width="2"/>
+                <line x1="30" y1="20" x2="50" y2="35" stroke="#8b1a1a" stroke-width="2"/>
+                <line x1="30" y1="45" x2="12" y2="62" stroke="#c0392b" stroke-width="1.5"/>
+                <line x1="30" y1="45" x2="48" y2="62" stroke="#c0392b" stroke-width="1.5"/>
+            </svg>
+            <h1>ARANDU</h1>
+            <div class="home-subtitulo">Uma história de fantasia</div>
+            <button class="btn-iniciar" onclick="irParaHQ()">✦ Iniciar Leitura ✦</button>
+        </div>
+        <div class="creditos">de Eduarda Castro</div>
+    </section>
+
+    <section class="tela" id="tela-hq">
+        <div class="particulas-hq-wrap" id="particulas-hq"></div>
+
+        <header class="menu-hq">
+            <div class="logo-hq">ARANDU</div>
+            <button class="btn-inicio" onclick="irParaInicio()">↩ Início</button>
+        </header>
+
+        <main class="conteudo-hq">
+            <img class="quadrinho cena1-queda" id="cena1" src="images/cena1.png" alt="Página 1">
+            <img class="quadrinho cena2-zoom" src="images/cena2.png" alt="Página 2">
+
+            <div class="quadrinho cena3-container" id="cena3-parallax">
+                <img src="images/cena3.png" alt="Página 3">
+            </div>
+
+            <img class="quadrinho" id="cena4" src="images/cena4.png" alt="Pagina 4">
+
+            <div class="container-quinto-quadro">
+                <img class="quadrinho" id="quadrinho-especial" src="images/cena5.png" alt="Página 5">
+                <div class="bloco-vazado" id="bloco-atrasado">
+                    <img src="images/cena5_2.png" alt="Detalhe Cena 5">
+                </div>
+            </div>
+
+            <img class="quadrinho hover-vermelho" src="images/cena6.png"  alt="Página 6">
+            <img class="quadrinho hover-laranja"  src="images/cena7.png"  alt="Página 7">
+            <img class="quadrinho hover-branco"   src="images/cena8.png"  alt="Página 8">
+
+            <div class="divisor-runico">
+                <svg width="38" height="38" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="20,2 36,12 36,28 20,38 4,28 4,12" stroke="#8b1a1a" stroke-width="1.5" fill="none" opacity=".7"/>
+                    <circle cx="20" cy="20" r="4" fill="#c0392b" opacity=".8"/>
+                </svg>
+            </div>
+
+            <div class="secao-transformar" id="secao-transformar">
+                <button class="btn-transformar" id="btn-transformar" onclick="iniciarTransformacao()">
+                    <span class="canto tl"></span><span class="canto tr"></span>
+                    <span class="canto bl"></span><span class="canto br"></span>
+                    Transformar
+                </button>
+            </div>
+
+            <div class="cena9-container" id="cena9-container">
+                <div class="flash-magia" id="flash-magia"></div>
+            </div>
+
+            <div class="conteudo-bloqueado" id="conteudo-bloqueado">
+                <img class="quadrinho cena-pos-transf" src="images/cena10.png" alt="Página 10">
+                <img class="quadrinho cena-pos-transf" src="images/cena11.png" alt="Página 11">
+                <img class="quadrinho cena-pos-transf" src="images/cena12.png" alt="Página 12">
+                <img class="quadrinho cena-pos-transf" src="images/cena13.png" alt="Página 13">
+
+                <div class="container-cena14" id="container-cena14">
+                    <img id="cena14-base" src="images/cena14_1.png" alt="Página 14">
+                    <div class="painel-lateral esq" id="painel14-esq">
+                        <img src="images/cena14_2.png" alt="Detalhe 14-2">
+                    </div>
+                    <div class="painel-lateral dir" id="painel14-dir">
+                        <img src="images/cena14_3.png" alt="Detalhe 14-3">
+                    </div>
+                </div>
+
+                <img class="quadrinho cena-pos-transf" src="images/cena14_4.png" alt="Página 14 final">
+                <img class="quadrinho cena-final" id="cena15-final" src="images/cena15.png"   alt="Página 15">
+                <img class="quadrinho cena-final" id="cena16-final" src="images/cena16.png" alt="Página 16">
+                <p class="msg-fim" id="msg-fim">✦ &nbsp; fim do capítulo &nbsp; ✦</p>
+            </div>
+        </main>
+    </section>
+</div>
+
+<script>
+const wrapper         = document.getElementById('wrapper-principal');
+const telaHq          = document.getElementById('tela-hq');
+const blocoAtrasado   = document.getElementById('bloco-atrasado');
+const quadroEspecial  = document.getElementById('quadrinho-especial');
+const cena9Container  = document.getElementById('cena9-container');
+const flashMagia      = document.getElementById('flash-magia');
+const conteudoBloq    = document.getElementById('conteudo-bloqueado');
+const secaoTransf     = document.getElementById('secao-transformar');
+const musica          = document.getElementById('musica-ambient');
+
+let timerDisp5  = false;
+let timerDisp4  = false;
+let timer14     = false;
+let transFeita  = false;
+
+const FRAMES = ['images/cena9_1.png','images/cena9_2.png','images/cena9_3.png','images/cena9_4.png'];
+
+/* ──────────────────────────────────────────────
+   CONTROLE DE ÁUDIO
+   volume máximo: 0.08 (bem sutil / ambiente)
+   fade in: ~8 s  |  fade out: ~3 s
+────────────────────────────────────────────── */
+const VOL_MAX  = 0.08;
+const btnSom   = document.getElementById('btn-som');
+let somAtivo   = false;   // áudio ainda não iniciado
+let somMutado  = false;   // usuário desativou manualmente
+let fadeTimer  = null;
+
+function fadeIn(alvo) {
+    clearInterval(fadeTimer);
+    alvo = alvo || VOL_MAX;
+    musica.volume = 0;
+    musica.play().catch(() => {});
+    fadeTimer = setInterval(() => {
+        const proximo = Math.min(musica.volume + 0.002, alvo);
+        musica.volume = proximo;
+        if (proximo >= alvo) clearInterval(fadeTimer);
+    }, 6);   // ~8 s para chegar em 0.08
+}
+
+function fadeOut(cb) {
+    clearInterval(fadeTimer);
+    fadeTimer = setInterval(() => {
+        const proximo = Math.max(musica.volume - 0.004, 0);
+        musica.volume = proximo;
+        if (proximo <= 0) {
+            clearInterval(fadeTimer);
+            musica.pause();
+            if (cb) cb();
+        }
+    }, 60);   // ~3 s para silenciar
+}
+
+function toggleSom() {
+    if (!somAtivo) {
+        // Primeira interação — inicia o áudio
+        somAtivo = true;
+        somMutado = false;
+        btnSom.textContent = '🔊';
+        btnSom.classList.remove('mutado');
+        fadeIn();
+        return;
+    }
+    if (somMutado) {
+        somMutado = false;
+        btnSom.textContent = '🔊';
+        btnSom.classList.remove('mutado');
+        fadeIn();
+    } else {
+        somMutado = true;
+        btnSom.textContent = '🔇';
+        btnSom.classList.add('mutado');
+        fadeOut();
+    }
+}
+
+function tentarTocarMusica() {
+    if (!musica || somMutado) return;
+    if (!somAtivo) {
+        somAtivo = true;
+        btnSom.textContent = '🔊';
+        btnSom.classList.remove('mutado');
+    }
+    fadeIn();
+}
+
+function pararMusica() {
+    if (!musica || musica.paused) return;
+    fadeOut();
+}
+
+function irParaHQ() {
+    wrapper.classList.add('mudou-tela');
+    tentarTocarMusica();
+    setTimeout(checarQuadrinhos, 400);
+}
+
+function irParaInicio() {
+    wrapper.classList.remove('mudou-tela');
+    // Som continua tocando na home — não para, só mantém
+    blocoAtrasado.classList.remove('mostrar');
+    timerDisp5 = false; timerDisp4 = false;
+    setTimeout(() => { telaHq.scrollTop = 0; }, 800);
+}
+
+// No mobile, os painéis laterais ficam em position:static, então
+// o container-cena14 precisa ter altura automática — garantimos isso via JS
+function ajustarMobile() {
+    const isMobile = window.innerWidth <= 768;
+    const containerC14 = document.getElementById('container-cena14');
+    if (containerC14) {
+        containerC14.style.position = isMobile ? 'static' : 'relative';
+    }
+}
+ajustarMobile();
+window.addEventListener('resize', ajustarMobile);
+
+// Geração de partículas da tela inicial
+(function criarParticulasHome() {
+    const cont  = document.getElementById('particulas-home');
+    const cores = ['#8b1a1a','#c0392b','#e05c2a','#ffffff'];
+    for (let i = 0; i < 22; i++) {
+        const p = document.createElement('div');
+        p.className = 'particula';
+        const s = Math.random()*4+1;
+        p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;
+            background:${cores[~~(Math.random()*cores.length)]};
+            animation-duration:${Math.random()*14+8}s;animation-delay:${Math.random()*12}s;
+            box-shadow:0 0 ${s*2}px currentColor;`;
+        cont.appendChild(p);
+    }
+})();
+
+// Geração dos brilhinhos mágicos e sutis do fundo da HQ
+(function criarParticulasHQ() {
+    const cont  = document.getElementById('particulas-hq');
+    const cores = ['#e05c2a', '#c0392b', '#ffaa66', '#ffebcc'];
+    for (let i = 0; i < 35; i++) {
+        const p = document.createElement('div');
+        p.className = 'particula-hq';
+        const s = Math.random() * 3 + 1.5;
+        
+        p.style.cssText = `
+            width: ${s}px; height: ${s}px;
+            left: ${Math.random() * 100}%;
+            background: ${cores[~~(Math.random() * cores.length)]};
+            animation-duration: ${Math.random() * 16 + 14}s;
+            animation-delay: -${Math.random() * 20}s;
+            box-shadow: 0 0 ${s * 3}px currentColor;
+        `;
+        cont.appendChild(p);
+    }
+})();
+
+function checarQuadrinhos() {
+    const gatilho = telaHq.clientHeight * 0.90;
+
+    document.querySelectorAll('.quadrinho, .cena3-container, .divisor-runico, .secao-transformar, #cena14-base').forEach(el => {
+        if (el.getBoundingClientRect().top < gatilho) {
+            el.classList.add('visivel');
+
+            // Cena 1 — impacto + vibração ao aparecer
+            if (el.id === 'cena1' && !el.dataset.impacto) {
+                el.dataset.impacto = '1';
+                setTimeout(() => {
+                    el.classList.add('cena1-impacto');
+                    // Vibração mobile
+                    if (navigator.vibrate) navigator.vibrate([60, 40, 80, 30, 40]);
+                    // Sacudida da tela
+                    wrapper.classList.add('sacudir');
+                    setTimeout(() => wrapper.classList.remove('sacudir'), 550);
+                    setTimeout(() => el.classList.remove('cena1-impacto'), 700);
+                }, 1500); // dispara quando a animação de queda termina
+            }
+
+            // Cena 4 — vinheta pulsante
+            if (el.id === 'cena4' && !el.dataset.pulso) {
+                el.dataset.pulso = '1';
+                setTimeout(() => {
+                    el.classList.add('cena4-pulso');
+                    setTimeout(() => el.classList.remove('cena4-pulso'), 2400);
+                }, 800);
+            }
+            // Cena 15 — vibração ao aparecer
+            if (el.id === 'cena15-final' && !el.dataset.tremor) {
+            el.dataset.tremor = '1';
+            setTimeout(() => {
+                if (navigator.vibrate) navigator.vibrate([60, 40, 80, 30, 40]);
+            wrapper.classList.add('sacudir');
+                setTimeout(() => wrapper.classList.remove('sacudir'), 550);
+            }, 2000);
+            }
+                // Cena 16 final — revela mensagem de encerramento
+            if (el.id === 'cena16-final' && !el.dataset.fim) {
+                el.dataset.fim = '1';
+                setTimeout(() => {
+                    const msg = document.getElementById('msg-fim');
+                    if (msg) msg.classList.add('visivel');
+                }, 2000);
+            }
+
+            if (el === quadroEspecial && !timerDisp5) {
+                timerDisp5 = true;
+                setTimeout(() => blocoAtrasado.classList.add('mostrar'), 2000);
+            }
+
+            if (el.id === 'cena14-base' && !timer14) {
+                timer14 = true;
+                setTimeout(() => document.getElementById('painel14-esq').classList.add('mostrar'), 1400);
+                setTimeout(() => document.getElementById('painel14-dir').classList.add('mostrar'), 2200);
+            }
+        }
+    });
+
+    if (transFeita) {
+        conteudoBloq.querySelectorAll('.quadrinho').forEach(el => {
+            if (el.getBoundingClientRect().top < gatilho) el.classList.add('visivel');
+        });
+    }
+
+    // Mensagem final — checa separadamente
+    const msgFim = document.getElementById('msg-fim');
+    if (msgFim && msgFim.getBoundingClientRect().top < gatilho && !msgFim.dataset.vis) {
+        msgFim.dataset.vis = '1';
+        msgFim.classList.add('visivel');
+    }
+}
+
+telaHq.addEventListener('scroll', checarQuadrinhos);
+
+/* ──────────────────────────────────────────────
+   PARALLAX — Cena 3
+   A imagem reage à posição do mouse dando
+   sensação de profundidade
+────────────────────────────────────────────── */
+(function setupParallaxCena3() {
+    const container = document.getElementById('cena3-parallax');
+    if (!container) return;
+    const img = container.querySelector('img');
+    if (!img) return;
+
+    // só ativa quando a cena3 já estiver visível e animação panorâmica terminar
+    let ativo = false;
+    let rafId = null;
+    let alvoX = 0, alvoY = 0, atualX = 0, atualY = 0;
+
+    container.addEventListener('mouseenter', () => {
+        // espera a animação panorâmica (14s) terminar antes de ativar parallax
+        if (!container.classList.contains('visivel')) return;
+        const tempoDecorrido = parseFloat(getComputedStyle(img).animationDelay || '0') * -1000;
+        if (tempoDecorrido < 14000) return; // ainda animando
+        ativo = true;
+    });
+
+    container.addEventListener('mouseleave', () => {
+        ativo = false;
+        cancelAnimationFrame(rafId);
+        img.style.transform = '';
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        if (!ativo) return;
+        const r = container.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width  - 0.5; // -0.5 a 0.5
+        const py = (e.clientY - r.top)  / r.height - 0.5;
+        alvoX = px * -18; // px de deslocamento máximo
+        alvoY = py * -10;
+
+        cancelAnimationFrame(rafId);
+        function suavizar() {
+            atualX += (alvoX - atualX) * 0.08;
+            atualY += (alvoY - atualY) * 0.08;
+            img.style.transform = `scale(1.08) translate(${atualX}px, ${atualY}px)`;
+            if (ativo) rafId = requestAnimationFrame(suavizar);
+        }
+        rafId = requestAnimationFrame(suavizar);
+    });
+
+    // Touch parallax para mobile — segue o gyroscope se disponível
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (e) => {
+            if (!container.classList.contains('visivel')) return;
+            const gx = Math.max(-20, Math.min(20, e.gamma || 0)); // -20 a 20
+            const gy = Math.max(-15, Math.min(15, (e.beta  || 0) - 45));
+            img.style.transform = `scale(1.05) translate(${gx * 0.4}px, ${gy * 0.3}px)`;
+        });
+    }
+})();
+
+/* Efeitos mágicos da transição */
+function dispararBrilhos(container, qtd = 25) {
+    const wrap = document.createElement('div');
+    wrap.className = 'brilhos-wrap';
+    container.appendChild(wrap);
+
+    const cores = ['#ffffff','#ffebcc','#ffaa66','#e05c2a','#c0392b'];
+    for (let i = 0; i < qtd; i++) {
+        const b  = document.createElement('div');
+        b.className = 'bp';
+        const s  = Math.random() * 8 + 4;
+        const dx = (Math.random() - 0.5) * 500;
+        const dy = (Math.random() - 0.5) * 400 - 30;
+        const dur = Math.random() * 1200 + 800;
+        const del = Math.random() * 200;
+
+        b.style.cssText = `
+            width:${s}px;height:${s}px;
+            left:${Math.random()*100}%;top:${Math.random()*100}%;
+            background:${cores[~~(Math.random()*cores.length)]};
+            --dx:${dx}px;--dy:${dy}px;
+            animation-duration:${dur}ms;animation-delay:${del}ms;
+            box-shadow:0 0 ${s*2.5}px currentColor, 0 0 ${s*5}px rgba(224,92,42,0.4);`;
+        wrap.appendChild(b);
+    }
+    setTimeout(() => wrap.remove(), 2200);
+}
+
+function iniciarTransformacao() {
+    if (transFeita) return;
+
+    secaoTransf.style.transition = 'opacity .8s';
+    secaoTransf.style.opacity    = '0';
+    secaoTransf.style.pointerEvents = 'none';
+
+    cena9Container.classList.add('ativa');
+
+    FRAMES.forEach((src, index) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `Transformação ${index + 1}`;
+        img.className = 'cena9-frame';
+        if(index === 0) img.classList.add('ativo');
+        cena9Container.appendChild(img);
+    });
+
+    const framesElements = cena9Container.querySelectorAll('.cena9-frame');
+    let idx = 0;
+    const TEMPO_EXIBICAO = 2400;
+
+    function executarTransicao() {
+        if (idx >= FRAMES.length - 1) {
+            setTimeout(desbloquear, 1000);
+            return;
+        }
+
+        const atual = framesElements[idx];
+        const proximo = framesElements[idx + 1];
+
+        flashMagia.classList.add('disparar');
+        dispararBrilhos(cena9Container, 35);
+        
+        proximo.classList.add('em-transicao');
+
+        setTimeout(() => {
+            atual.classList.remove('ativo');
+            proximo.classList.remove('em-transicao');
+            proximo.classList.add('ativo');
+            flashMagia.classList.remove('disparar');
+            idx++;
+            setTimeout(executarTransicao, TEMPO_EXIBICAO);
+        }, 1200);
+    }
+
+    setTimeout(executarTransicao, TEMPO_EXIBICAO);
+}
+
+function desbloquear() {
+    transFeita = true;
+    dispararBrilhos(cena9Container, 50);
+
+    conteudoBloq.classList.add('desbloqueado');
+    setTimeout(() => {
+        const primeiro = conteudoBloq.querySelector('.quadrinho');
+        if (primeiro) primeiro.scrollIntoView({ behavior:'smooth', block:'start' });
+        checarQuadrinhos();
+    }, 400);
+}
+</script>
+</body>
+</html>
